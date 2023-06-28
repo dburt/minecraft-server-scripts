@@ -8,3 +8,4 @@ gem 'foreman'  # start.sh
 
 gem 'sinatra'  # log_viewer_server.rb
 gem 'puma'     # log_viewer_server.rb
+gem 'rerun'    # log_viewer_server.rb (dev)
