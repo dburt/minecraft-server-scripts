@@ -41,3 +41,6 @@ get "/chat" do
   heading("Chat") +
     File.read("logs/latest.log").lines.grep(/<.*>/).join
 end
+
+# TODO: categories for advancements, chat, commands, joins, exits, server start/stop
+# TODO: filter logs by date, category, string

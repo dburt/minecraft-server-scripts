@@ -20,9 +20,9 @@ Inspired by [Legendary-Java-Minecraft-Geyser-Floodgate](https://github.com/TheRe
 
 Start the Minecraft server using Foreman and its Procfile.
 
-* Procfile: run `./minecraft_server.rb` and `./log_viewer_server.rb`
+* Procfile: run `./minecraft_server.rb` and `./log_viewer_server/app.rb`
 * minecraft\_server.rb: run Paper Minecraft server
-* log\_viewer\_server.rb: run simple Sinatra log viewer server
+* log\_viewer\_server/app.rb: run simple Sinatra log viewer server
 
 ### update.sh
 
