@@ -9,7 +9,7 @@ def heading(h, underline = "=")
 end
 
 def logs_dir
-  Pathname("../logs")
+  Pathname(__dir__) + "../logs"
 end
 
 def log_lines

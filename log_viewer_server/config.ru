@@ -1,2 +1,2 @@
-require_relative './log_viewer_server'
+require_relative './app'
 run Sinatra::Application
