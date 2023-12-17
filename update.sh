@@ -19,7 +19,7 @@ fi
 echo "Updating Paper, Geyser and Floodgate"
 
 echo "Finding latest version of Minecraft/Paper available..."
-Version=$(curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" https://papermc.io/api/v2/projects/paper | ruby -rjson -e 'puts JSON.parse(ARGF.read)["versions"].last')
+Version=$(curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" https://papermc.io/api/v2/projects/paper | jq -r '.versions[-1]')
 echo "Got Version=${Version}"
 
 # Get latest Paper build
@@ -44,30 +44,34 @@ else
 fi
 
 # Update Floodgate if new version is available
-echo "Checking for latest Floodgate fingerprint..."
-FloodgateMD5=$(curl --no-progress-meter -k -L -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" 'https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar/*fingerprint*/' | ruby -e 'puts ARGF.read[/MD5: (\w+)/, 1]')
-if [ -n "$FloodgateMD5" ]; then
-    LocalMD5=$(md5sum plugins/floodgate-spigot.jar | cut -d' ' -f1)
-    if [ -e plugins/floodgate-spigot.jar ] && [ "$LocalMD5" = "$FloodgateMD5" ]; then
-        echo "Floodgate is up to date at $FloodgateMD5"
+echo "Checking for latest Floodgate version and build..."
+FloodgateVersionInfo=$(curl --no-progress-meter -k -L https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest)
+FloodgateVersion=$(echo $FloodgateVersionInfo | jq -r '"version " + .version + " build " + (.build | tostring)')
+FloodgateSHA256=$(echo $FloodgateVersionInfo | jq -r '.downloads.spigot.sha256')
+if [ -n "$FloodgateSHA256" ]; then
+    LocalSHA256=$(sha256sum plugins/floodgate-spigot.jar | cut -d' ' -f1)
+    if [ -e plugins/floodgate-spigot.jar ] && [ "$LocalSHA256" = "$FloodgateSHA256" ]; then
+        echo "Floodgate is up to date at $FloodgateVersion"
     else
-        echo "Updating Floodgate from $LocalMD5 to $FloodgateMD5..."
-        curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" -o plugins/floodgate-spigot.jar "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
+        echo "Updating Floodgate to $FloodgateVersion..."
+        curl --no-progress-meter -k -L -o plugins/floodgate-spigot.jar "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot"
     fi
 else
     echo "Unable to check for updates to Floodgate!"
 fi
 
 # Update Geyser if new version is available
-echo "Checking for latest Geyser fingerprint..."
-GeyserMD5=$(curl --no-progress-meter -k -L -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" 'https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar/*fingerprint*/' | ruby -e 'puts ARGF.read[/MD5: (\w+)/, 1]')
-if [ -n "$GeyserMD5" ]; then
-    LocalMD5=$(md5sum plugins/Geyser-Spigot.jar | cut -d' ' -f1)
-    if [ -e plugins/Geyser-Spigot.jar ] && [ "$LocalMD5" = "$GeyserMD5" ]; then
-        echo "Geyser is up to date at $GeyserMD5"
+echo "Checking for latest Geyser version and build..."
+GeyserVersionInfo=$(curl --no-progress-meter -k -L https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest)
+GeyserVersion=$(echo $GeyserVersionInfo | jq -r '"version " + .version + " build " + (.build | tostring)')
+GeyserSHA256=$(echo $GeyserVersionInfo | jq -r '.downloads.spigot.sha256')
+if [ -n "$GeyserSHA256" ]; then
+    LocalSHA256=$(sha256sum plugins/floodgate-spigot.jar | cut -d' ' -f1)
+    if [ -e plugins/geyser-spigot.jar ] && [ "$LocalSHA256" = "$GeyserSHA256" ]; then
+        echo "Geyser is up to date at $GeyserVersion"
     else
-        echo "Updating Geyser from $LocalMD5 to $GeyserMD5..."
-        curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" -o plugins/Geyser-Spigot.jar "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
+        echo "Updating Geyser to $GeyserVersion..."
+        curl --no-progress-meter -k -L -o plugins/geyser-spigot.jar "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot"
     fi
 else
     echo "Unable to check for updates to Geyser!"
