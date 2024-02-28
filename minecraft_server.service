@@ -1,0 +1,17 @@
+[Unit]
+Description=Jabberwocky Minecraft Server
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=akash
+WorkingDirectory=/home/akash/minecraft_server
+ExecStart=/home/akash/minecraft_server/start.sh
+Restart=always
+RestartSec=30
+StandardInput=null
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

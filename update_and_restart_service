@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+set +ex
+
+./update.sh
+
+echo "say 'server restarting for updates in 30 seconds'" | ./rcon
+sleep 30
+systemctl restart minecraft_server
