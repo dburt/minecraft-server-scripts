@@ -62,11 +62,11 @@ fi
 
 # Update Geyser if new version is available
 echo "Checking for latest Geyser version and build..."
-GeyserVersionInfo=$(curl --no-progress-meter -k -L https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest)
+GeyserVersionInfo=$(curl --no-progress-meter -k -L https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest)
 GeyserVersion=$(echo $GeyserVersionInfo | jq -r '"version " + .version + " build " + (.build | tostring)')
 GeyserSHA256=$(echo $GeyserVersionInfo | jq -r '.downloads.spigot.sha256')
 if [ -n "$GeyserSHA256" ]; then
-    LocalSHA256=$(sha256sum plugins/floodgate-spigot.jar | cut -d' ' -f1)
+    LocalSHA256=$(sha256sum plugins/geyser-spigot.jar | cut -d' ' -f1)
     if [ -e plugins/geyser-spigot.jar ] && [ "$LocalSHA256" = "$GeyserSHA256" ]; then
         echo "Geyser is up to date at $GeyserVersion"
     else
