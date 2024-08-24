@@ -78,7 +78,7 @@ else
 fi
 
 # Update Simple Voice Chat if new version is available
-LatestVoicechatUrl=$(curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" https://modrinth.com/plugin/simple-voice-chat/versions\?l\=spigot\&g\=$Version | ruby -rnokogiri -e 'puts Nokogiri::HTML(ARGF.read).css("a.release.download-button").attr("href").value')
+LatestVoicechatUrl=$(curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" https://modrinth.com/plugin/simple-voice-chat/versions\?platform\=spigot\&gameVersion\=$Version | ruby -rnokogiri -e 'puts Nokogiri::HTML(ARGF.read).css("a[aria-label=Download]").attr("href").value')
 if [ -n "$LatestVoicechatUrl" ]; then
     LocalVoicechat="$(echo plugins/voicechat-*)"
     if [ -e "$LocalVoicechat" ] && [ "$(basename $LatestVoicechatUrl)" = "$(basename $LocalVoicechat)" ]; then
