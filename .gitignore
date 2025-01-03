@@ -20,3 +20,14 @@
 /skyblock_the_end
 /crash-reports
 /Legendary-Java-Minecraft-Geyser-Floodgate
+/plugins
+/main
+/main_nether
+/main_the_end
+/node_modules
+.console_history
+*.json
+*.yml
+/server.properties
+/floodgate-fingerprint.html
+/eula.txt

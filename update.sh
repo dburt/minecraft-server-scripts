@@ -1,6 +1,10 @@
 #!/bin/bash
 
+# exit on error
 set -e
+
+# exceptionally verbose debug tracing
+# set -x
 
 #TODO: keep older versions of Paper, Floodgate, and Geyser
 
@@ -19,12 +23,12 @@ fi
 echo "Updating Paper, Geyser and Floodgate"
 
 echo "Finding latest version of Minecraft/Paper available..."
-Version=$(curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" https://papermc.io/api/v2/projects/paper | jq -r '.versions[-1]')
+Version=$(curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" https://api.papermc.io/v2/projects/paper | jq -r '.versions[-1]')
 echo "Got Version=${Version}"
 
 # Get latest Paper build
 echo "Checking available builds of Paper for version $Version..."
-BuildJSON=$(curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" https://papermc.io/api/v2/projects/paper/versions/$Version)
+BuildJSON=$(curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" https://api.papermc.io/v2/projects/paper/versions/$Version)
 Build=$(echo "$BuildJSON" | rev | cut -d, -f 1 | cut -d']' -f 2 | cut -d'[' -f 1 | rev)
 Build=$(($Build + 0))
 if [[ $Build != 0 ]]; then
@@ -33,7 +37,7 @@ if [[ $Build != 0 ]]; then
 	echo "Paper is already up to date at $Version-$Build"
     else
 	echo "Updating Paper to $Version-$Build"
-	curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" -o "$PaperJar" "https://papermc.io/api/v2/projects/paper/versions/$Version/builds/$Build/downloads/paper-$Version-$Build.jar"
+	curl --no-progress-meter -H "Accept-Encoding: identity" -H "Accept-Language: en" -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4.212 Safari/537.36" -o "$PaperJar" "https://api.papermc.io/v2/projects/paper/versions/$Version/builds/$Build/downloads/paper-$Version-$Build.jar"
 	if [[ -L minecraft_server.jar ]]; then
 	    rm minecraft_server.jar
 	fi
