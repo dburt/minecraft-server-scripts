@@ -1,3 +1,29 @@
 #!/bin/bash
+#
+# Send a command to the Minecraft server console via the detached screen
+# session "mc" (see start.sh). This replaces network RCON / mcrcon — input goes
+# through screen's pty locally, so there is no listening port and no password.
+#
+# Usage:
+#   ./rcon say "hello world"        # command as arguments
+#   echo "say hello" | ./rcon       # command(s) on stdin, one per line
+#
+# Requires the server to be running under screen (systemctl restart
+# minecraft_server after start.sh was updated). Exits non-zero if the session
+# is not found.
+set -euo pipefail
 
-mcrcon-nsg -pJabberwock58 $*
+SESSION=mc
+
+send() {
+  # Append a carriage return so the server console submits the line.
+  screen -S "$SESSION" -p 0 -X stuff "$1$(printf '\r')"
+}
+
+if [ "$#" -gt 0 ]; then
+  send "$*"
+else
+  while IFS= read -r line || [ -n "$line" ]; do
+    [ -n "$line" ] && send "$line"
+  done
+fi
